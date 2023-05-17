@@ -13,6 +13,7 @@ import type { ComponentToken as CheckboxComponentToken } from '../../checkbox/st
 import type { ComponentToken as CollapseComponentToken } from '../../collapse/style';
 import type { ComponentToken as ColorPickerComponentToken } from '../../color-picker/style';
 import type { ComponentToken as DatePickerComponentToken } from '../../date-picker/style';
+import type { ComponentToken as DiscordInputToken } from '../../discord-input/styles';
 import type { ComponentToken as DividerComponentToken } from '../../divider/style';
 import type { ComponentToken as DrawerComponentToken } from '../../drawer/style';
 import type { ComponentToken as DropdownComponentToken } from '../../dropdown/style';
@@ -116,6 +117,7 @@ export interface ComponentTokenMap {
   Tour?: TourComponentToken;
   QRCode?: QRCodeComponentToken;
   App?: AppComponentToken;
+  DiscordInput?: DiscordInputToken;
 
   /** @private Internal TS definition. Do not use. */
   Wave?: WaveToken;
