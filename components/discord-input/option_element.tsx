@@ -3,26 +3,23 @@ import type { Node as slateNode } from 'slate';
 import { ConfigContext } from '../config-provider';
 import useStyle from './style';
 
-interface ApplicationCommandProps {
+interface OptionElementProps {
   attributes: any;
   element: slateNode;
   children: React.ReactNode;
 }
 
-function ApplicationCommand(props: ApplicationCommandProps) {
+function OptionElement(props: OptionElementProps) {
   const { getPrefixCls } = React.useContext(ConfigContext);
   const prefixCls = getPrefixCls('discord-input');
   const [wrapSSR] = useStyle(prefixCls);
 
   return wrapSSR(
-    <div
-      className={`${prefixCls}-application-command-option-value`}
-      data-trailing-placeholder={props.attributes.placeholder}
-      {...props.attributes}
-    >
-      {props.children}
-    </div>,
+    <>
+      <span className={`${prefixCls}-option-key`}> {props.attributes.name}</span>
+      <span className={`${prefixCls}-option-value`}>{props.children}</span>
+    </>,
   );
 }
 
-export default ApplicationCommand;
+export default OptionElement;

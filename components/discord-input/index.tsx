@@ -1,21 +1,29 @@
 import { Space } from 'antd';
 import * as React from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import type { Node as slateNode } from 'slate';
-import { Transforms, createEditor } from 'slate';
-import { Editable, ReactEditor, Slate, useSlate, useSlateWithV, withReact } from 'slate-react';
+import { useCallback, useMemo } from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { createEditor, Transforms } from 'slate';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { Editable, Slate, withReact } from 'slate-react';
+import { ConfigContext } from '../config-provider';
 import ApplicationCommand from './application_command';
+import Normal from './normal';
+import OptionElement from './option_element';
+import useStyle from './style';
 
 const initialValue = [
   {
     type: 'applicationCommand',
+    attributes: {
+      placeholder: '测试',
+    },
     children: [
-      { text: '11' },
+      { text: '/discord ' },
       {
-        type: 'tag',
-        children: [{ text: '测试删除' }],
+        type: 'option',
+        children: [{ text: 's324234', attributes: { name: 'prompt' } }],
       },
-      { text: '123123' },
+      { text: 'text3' },
     ],
   },
   {
@@ -28,66 +36,33 @@ const initialValue = [
   },
 ];
 
-interface TagElementProps {
-  attributes: any;
-  element: slateNode;
-  children: React.ReactNode;
-}
-
-const TagElement = ({ attributes, element, children }: TagElementProps) => {
-  const editor = useSlate();
-  const reactEditor = useSlateWithV();
-  const [preventDelete, setPreventDelete] = useState(true);
-
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Backspace') {
-      event.preventDefault();
-      setPreventDelete(false);
-    }
-  };
-
-  const handleKeyUp = (event: React.KeyboardEvent) => {
-    if (event.key === 'Backspace' && !preventDelete) {
-      Transforms.removeNodes(editor, {
-        at: ReactEditor.findPath(reactEditor.editor, element),
-      });
-    }
-  };
-
-  useEffect(() => {
-    setPreventDelete(true);
-  }, [editor.selection]);
-
-  return (
-    <span {...attributes} className="tag-wrapper" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
-      {children}
-    </span>
-  );
-};
-
 function DiscordInput() {
+  const { getPrefixCls } = React.useContext(ConfigContext);
+  const prefixCls = getPrefixCls('discord-input');
+  const [wrapSSR] = useStyle(prefixCls);
   const editor = useMemo(() => withReact(createEditor()), []);
 
   const renderElement = useCallback((props: any) => {
     switch (props.element.type) {
-      case 'tag':
-        return <TagElement {...props} />;
       case 'applicationCommand':
         return <ApplicationCommand {...props} />;
+      case 'option':
+        return <OptionElement {...props} />;
       default:
-        return <p {...props.attributes}>{props.children}</p>;
+        return <Normal {...props} />;
     }
   }, []);
-  return (
+  return wrapSSR(
     <Space
-      style={{
-        maxHeight: '20vh',
-        overflowY: 'scroll',
-        width: '100%',
-        overflowX: 'hidden',
-        backgroundColor: '#36393f',
-        borderRadius: '5px',
-      }}
+      className={`${prefixCls}`}
+      // style={{
+      //   maxHeight: '20vh',
+      //   overflowY: 'scroll',
+      //   width: '100%',
+      //   overflowX: 'hidden',
+      //   backgroundColor: '#36393f',
+      //   borderRadius: '5px',
+      // }}
     >
       <Slate editor={editor} value={initialValue}>
         <Editable
@@ -107,7 +82,7 @@ function DiscordInput() {
           }}
         />
       </Slate>
-    </Space>
+    </Space>,
   );
 }
 
